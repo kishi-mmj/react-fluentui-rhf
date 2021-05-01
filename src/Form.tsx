@@ -1,7 +1,13 @@
 import {
-    Checkbox, ChoiceGroup, DatePicker, DayOfWeek,
-    DefaultButton, Dropdown, DropdownMenuItemType,
-    IChoiceGroupOption, IDropdownOption, IDropdownStyles,
+    Checkbox,
+    ChoiceGroup,
+    DatePicker,
+    DefaultButton,
+    Dropdown,
+    DropdownMenuItemType,
+    IChoiceGroupOption,
+    IDropdownOption,
+    IDropdownStyles,
     IStackProps,
     PrimaryButton,
     Stack,
@@ -17,7 +23,7 @@ interface FormIF {
     age: string,
     hobby: string[]
     bloodType: string
-    aaa: string
+    food: string
     birthDate: Date | null | undefined
 }
 
@@ -29,7 +35,10 @@ export const Form: VFC = () => {
         defaultValues: {
             name: "",
             age: "",
-            hobby: ["サッカー"]
+            hobby: [],
+            bloodType: "",
+            food: "",
+            birthDate: undefined
         }
     })
 
@@ -60,28 +69,18 @@ export const Form: VFC = () => {
     };
 
     const dropdownOptions: IDropdownOption[] = [
-        {key: 'fruitsHeader', text: 'Fruits', itemType: DropdownMenuItemType.Header},
-        {key: 'apple', text: 'Apple'},
-        {key: 'banana', text: 'Banana'},
-        {key: 'orange', text: 'Orange', disabled: true},
-        {key: 'grape', text: 'Grape'},
-        {key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider},
-        {key: 'vegetablesHeader', text: 'Vegetables', itemType: DropdownMenuItemType.Header},
-        {key: 'broccoli', text: 'Broccoli'},
-        {key: 'carrot', text: 'Carrot'},
-        {key: 'lettuce', text: 'Lettuce'},
+        {key: '', text: ''},
+        {key: 'Fruits', text: 'フルーツ', itemType: DropdownMenuItemType.Header},
+        {key: 'Apple', text: 'りんご'},
+        {key: 'Banana', text: 'バナナ'},
+        {key: 'Orange', text: 'オレンジ', disabled: true},
+        {key: 'Grape', text: 'ぶどう'},
+        {key: 'ボーダー', text: '-', itemType: DropdownMenuItemType.Divider},
+        {key: 'Vegetables', text: '野菜', itemType: DropdownMenuItemType.Header},
+        {key: 'Broccoli', text: 'ブロッコリー'},
+        {key: 'Carrot', text: 'にんじん'},
+        {key: 'Lettuce', text: 'レタス'},
     ];
-
-    const days: IDropdownOption[] = [
-        {text: 'Sunday', key: DayOfWeek.Sunday},
-        {text: 'Monday', key: DayOfWeek.Monday},
-        {text: 'Tuesday', key: DayOfWeek.Tuesday},
-        {text: 'Wednesday', key: DayOfWeek.Wednesday},
-        {text: 'Thursday', key: DayOfWeek.Thursday},
-        {text: 'Friday', key: DayOfWeek.Friday},
-        {text: 'Saturday', key: DayOfWeek.Saturday},
-    ];
-
     const onFormatDate = (date?: Date): string => {
         return date ? format(date, "yyyy/MM/dd") : ""
     };
@@ -149,7 +148,7 @@ export const Form: VFC = () => {
                     rules={{required: "必須入力"}}
                     render={({field, fieldState}) => {
                         function merge(value: string) {
-                            const copy = field.value.slice() as string[]
+                            const copy = (field.value || []).slice() as string[]
                             const index = copy.indexOf(value)
                             index > -1 ? copy.splice(index, 1) : copy.push(value)
                             field.onChange(copy)
@@ -205,8 +204,10 @@ export const Form: VFC = () => {
                             >
                                 <ChoiceGroup
                                     id={field.name}
+                                    selectedKey={field.value}
+                                    defaultSelectedKey={field.value}
                                     options={choiceGroupOptions}
-                                    onChange={field.onChange}
+                                    onChange={(_, o) => field.onChange(o?.key)}
                                 />
                             </FiledLabel>
                         )
@@ -215,12 +216,12 @@ export const Form: VFC = () => {
 
                 <Controller
                     control={control}
-                    name={"aaa"}
+                    name={"food"}
                     rules={{required: "必須入力"}}
-                    render={({field, formState, fieldState}) => {
+                    render={({field, fieldState}) => {
                         return (
                             <FiledLabel
-                                name={"血液型"}
+                                name={"食べ物"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
@@ -228,9 +229,9 @@ export const Form: VFC = () => {
                             >
                                 <Dropdown
                                     id={field.name}
-                                    placeholder="Select an option"
                                     options={dropdownOptions}
                                     styles={dropdownStyles}
+                                    defaultSelectedKey={field.value}
                                     onChange={(e, o) => field.onChange(o?.key)}
                                 />
                             </FiledLabel>
@@ -252,6 +253,7 @@ export const Form: VFC = () => {
                             >
                                 <DatePicker
                                     id={field.name}
+                                    value={field.value || undefined}
                                     textField={{errorMessage: fieldState.error?.message}}
                                     onSelectDate={(date) => field.onChange(date)}
                                     formatDate={onFormatDate}
