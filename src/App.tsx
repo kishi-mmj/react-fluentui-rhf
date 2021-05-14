@@ -17,7 +17,7 @@ loadTheme(createTheme({
 function App() {
 
     initializeIcons();
-    setIconOptions({disableWarnings:true}) // warningを削除
+    setIconOptions({disableWarnings:true}) // warningを削除 https://stackoverflow.com/questions/64131605/how-to-remove-or-handle-icons-were-reregistered-warning-in-react
 
     return (
         <ThemeProvider>

@@ -17,6 +17,8 @@ import React, {useCallback, VFC} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {FiledLabel} from "./FieldLabel";
 import {format} from "date-fns";
+import {FormatDate} from "./util/FormatDate";
+import {toggleFromArray} from "./util/ToggleFromArray";
 
 interface FormIF {
     name: string,
@@ -57,6 +59,7 @@ export const Form: VFC = () => {
         tokens: {childrenGap: 15},
     };
 
+    // choiceGroup
     const choiceGroupOptions: IChoiceGroupOption[] = [
         {key: 'A', text: 'A'},
         {key: 'B', text: 'B'},
@@ -64,6 +67,7 @@ export const Form: VFC = () => {
         {key: 'AB', text: 'AB'},
     ];
 
+    // dropdown
     const dropdownStyles: Partial<IDropdownStyles> = {
         dropdown: {width: 300},
     };
@@ -81,9 +85,6 @@ export const Form: VFC = () => {
         {key: 'Carrot', text: 'にんじん'},
         {key: 'Lettuce', text: 'レタス'},
     ];
-    const onFormatDate = (date?: Date): string => {
-        return date ? format(date, "yyyy/MM/dd") : ""
-    };
 
     return (
         <Stack style={{width: 600, margin: "0 auto"}}>
@@ -96,12 +97,12 @@ export const Form: VFC = () => {
                     name={"name"}
                     rules={{
                         required: "必須入力",
-                        validate: (v) => v === "kishi" || '名前が違います.'
+                        validate: (v) => v === "name" || '名前が違います.'
                     }}
                     render={({field, formState}) => {
                         return (
                             <FiledLabel
-                                name={"名前"}
+                                label={"名前"}
                                 htmlFor={field.name}
                                 w={120}
                                 required={true}
@@ -112,6 +113,7 @@ export const Form: VFC = () => {
                                     value={field.value}
                                     defaultValue={field.value}
                                     errorMessage={formState.errors.name?.message}
+                                    placeholder={`'name'と入力`}
                                 />
                             </FiledLabel>
                         )
@@ -125,7 +127,7 @@ export const Form: VFC = () => {
                     render={({field, formState}) => {
                         return (
                             <FiledLabel
-                                name={"年齢"}
+                                label={"年齢"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
@@ -148,15 +150,11 @@ export const Form: VFC = () => {
                     rules={{required: "必須入力"}}
                     render={({field, fieldState}) => {
                         function merge(value: string) {
-                            const copy = (field.value || []).slice() as string[]
-                            const index = copy.indexOf(value)
-                            index > -1 ? copy.splice(index, 1) : copy.push(value)
-                            field.onChange(copy)
+                            field.onChange(toggleFromArray(field.value, value))
                         }
-
                         return (
                             <FiledLabel
-                                name={"スポーツ"}
+                                label={"スポーツ"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
@@ -179,7 +177,6 @@ export const Form: VFC = () => {
                                         onChange={() => merge("テニス")}
                                     />
                                     <Checkbox
-                                        {...field}
                                         label="ラグビー"
                                         checked={field.value?.includes("ラグビー")}
                                         onChange={() => merge("ラグビー")}
@@ -193,10 +190,10 @@ export const Form: VFC = () => {
                     control={control}
                     name={"bloodType"}
                     rules={{required: "必須入力"}}
-                    render={({field, formState, fieldState}) => {
+                    render={({field, fieldState}) => {
                         return (
                             <FiledLabel
-                                name={"血液型"}
+                                label={"血液型"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
@@ -220,17 +217,17 @@ export const Form: VFC = () => {
                     render={({field, fieldState}) => {
                         return (
                             <FiledLabel
-                                name={"食べ物"}
+                                label={"食べ物"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
-                                errorText={fieldState.error?.message}
                             >
                                 <Dropdown
                                     id={field.name}
                                     options={dropdownOptions}
                                     styles={dropdownStyles}
                                     defaultSelectedKey={field.value}
+                                    errorMessage={fieldState.error?.message}
                                     onChange={(e, o) => field.onChange(o?.key)}
                                 />
                             </FiledLabel>
@@ -242,10 +239,10 @@ export const Form: VFC = () => {
                     control={control}
                     name={"birthDate"}
                     rules={{required: "必須入力"}}
-                    render={({field, formState, fieldState}) => {
+                    render={({field, fieldState}) => {
                         return (
                             <FiledLabel
-                                name={"生年月日"}
+                                label={"生年月日"}
                                 htmlFor={field.name}
                                 required={true}
                                 w={120}
@@ -255,7 +252,7 @@ export const Form: VFC = () => {
                                     value={field.value || undefined}
                                     textField={{errorMessage: fieldState.error?.message}}
                                     onSelectDate={(date) => field.onChange(date)}
-                                    formatDate={onFormatDate}
+                                    formatDate={FormatDate}
                                 />
                             </FiledLabel>
                         )

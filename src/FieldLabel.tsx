@@ -1,9 +1,11 @@
 import {Label, Stack, Text} from "@fluentui/react";
 import {ILabelProps} from "@fluentui/react/lib/components/Label/Label.types";
+import {IStackItemProps} from "@fluentui/react/lib/components/Stack/StackItem/StackItem.types";
 import {ITextProps} from "@fluentui/react/lib/components/Text/Text.types";
 import React, {FC} from "react";
 
-export const FiledLabel: FC<ILabelProps & { name: string, w?: number | string, errorText?: string }> = (props) => {
+export const FiledLabel: FC<ILabelProps & { label: string, w?: number | string, errorText?: string, direction?: "horizon" | "vertical" }> = (props
+) => {
 
     const columnProps: Partial<ILabelProps> = {
         style: {marginRight: 8, width: props.w}
@@ -26,9 +28,14 @@ export const FiledLabel: FC<ILabelProps & { name: string, w?: number | string, e
         }
     };
 
+    const iStackItemProps = props.direction === "vertical" ? {horizontal: false} : {
+        horizontal: true,
+        horizontalAlign: "baseline"
+    } as IStackItemProps
+
     return (
-        <Stack horizontal horizontalAlign={"baseline"}>
-            <Label {...props} {...columnProps}>{props.name}</Label>
+        <Stack {...iStackItemProps}>
+            <Label {...props} {...columnProps}>{props.label}</Label>
             <div>
                 <div>{props.children}</div>
                 {props.errorText && <div><Text {...textStyleProps}>{props.errorText}</Text></div>}
