@@ -31,7 +31,7 @@ export const Form: VFC = () => {
 
     const {control, handleSubmit, reset} = useForm<FormIF>({
         mode: "onBlur",
-        // 初期値を明示的に設定しないとリセットがうまくいかない i文字だけ残ったままになる
+        // 初期値を明示的に設定しないとリセットがうまくいかない 文字だけ残ったままになる
         defaultValues: {
             name: "",
             age: "",
@@ -205,7 +205,6 @@ export const Form: VFC = () => {
                                 <ChoiceGroup
                                     id={field.name}
                                     selectedKey={field.value}
-                                    defaultSelectedKey={field.value}
                                     options={choiceGroupOptions}
                                     onChange={(_, o) => field.onChange(o?.key)}
                                 />

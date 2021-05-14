@@ -1,4 +1,4 @@
-import {DropdownMenuItemType, IDropdownOption, Label, Stack, Text} from "@fluentui/react";
+import {Label, Stack, Text} from "@fluentui/react";
 import {ILabelProps} from "@fluentui/react/lib/components/Label/Label.types";
 import {ITextProps} from "@fluentui/react/lib/components/Text/Text.types";
 import React, {FC} from "react";
@@ -8,7 +8,6 @@ export const FiledLabel: FC<ILabelProps & { name: string, w?: number | string, e
     const columnProps: Partial<ILabelProps> = {
         style: {marginRight: 8, width: props.w}
     };
-
 
     const textStyleProps: Partial<ITextProps> = {
         style: {

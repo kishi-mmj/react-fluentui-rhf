@@ -1,4 +1,4 @@
-import {createTheme, initializeIcons, loadTheme, ThemeProvider} from "@fluentui/react";
+import {createTheme, initializeIcons, loadTheme, setIconOptions, ThemeProvider} from "@fluentui/react";
 import React from 'react';
 import './App.css';
 import {Form} from "./Form";
@@ -17,15 +17,12 @@ loadTheme(createTheme({
 function App() {
 
     initializeIcons();
+    setIconOptions({disableWarnings:true}) // warningを削除
 
     return (
         <ThemeProvider>
             <div className="App">
-
-                <Form></Form>
-
-
-
+                <Form/>
             </div>
         </ThemeProvider>
     );
