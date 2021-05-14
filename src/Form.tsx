@@ -12,7 +12,6 @@ import {
     IDropdownOption,
     IDropdownStyles,
     IStackProps,
-    IStackTokens,
     PrimaryButton,
     SelectableOptionMenuItemType,
     Stack,
@@ -21,6 +20,7 @@ import {
 import React, {useCallback, VFC} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {FiledLabel} from "./FieldLabel";
+import {formatComboBoxText} from "./util/FormatComboBoxText";
 import {FormatDate} from "./util/FormatDate";
 import {toggleFromArray} from "./util/ToggleFromArray";
 
@@ -32,6 +32,11 @@ interface FormIF {
     food: string
     birthDate: Date | null | undefined
     job: string
+}
+
+export interface Option {
+    key: string,
+    text: string
 }
 
 export const Form: VFC = () => {
@@ -93,7 +98,7 @@ export const Form: VFC = () => {
     ];
 
     // comboBox
-    const comboBoxOptions: IComboBoxOption[] = [
+    const comboBoxOptions: Array<IComboBoxOption & Option> = [
         {key: 'Header1', text: 'First heading', itemType: SelectableOptionMenuItemType.Header},
         {key: 'A', text: 'Option A'},
         {key: 'B', text: 'Option B'},
@@ -279,22 +284,11 @@ export const Form: VFC = () => {
                     }}
                 />
 
-
                 <Controller
                     control={control}
                     name={"job"}
                     rules={{required: "必須入力"}}
                     render={({field, fieldState}) => {
-                        function fixDisplayValue(v: string) {
-                            let text: string | undefined = v
-                            comboBoxOptions?.some(e => {
-                                if (e.key === v) {
-                                    text = e.text
-                                    return
-                                }
-                            })
-                            return text
-                        }
                         return (
                             <FiledLabel
                                 label={"職業"}
@@ -303,9 +297,9 @@ export const Form: VFC = () => {
                             >
                                 <ComboBox
                                     id={field.name}
-                                    text={fixDisplayValue(field.value)}
-                                    defaultValue={field.value || undefined}
-                                    selectedKey={field.value || undefined}
+                                    text={formatComboBoxText(comboBoxOptions, field.value)}
+                                    defaultValue={field.value}
+                                    selectedKey={field.value}
                                     allowFreeform={true}
                                     autoComplete={'on'}
                                     options={comboBoxOptions}
