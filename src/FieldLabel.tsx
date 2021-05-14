@@ -4,11 +4,14 @@ import {IStackItemProps} from "@fluentui/react/lib/components/Stack/StackItem/St
 import {ITextProps} from "@fluentui/react/lib/components/Text/Text.types";
 import React, {FC} from "react";
 
-export const FiledLabel: FC<ILabelProps & { label: string, w?: number | string, errorText?: string, direction?: "horizon" | "vertical" }> = (props
+export const FiledLabel: FC<ILabelProps & { label: string, labelWidth?: number | string, errorText?: string, direction?: "horizon" | "vertical" }> = (props
 ) => {
 
+    const isVertical = props.direction === "vertical"
+    const labelWidth = props.labelWidth ? props.labelWidth : isVertical ? "auto" : "120px"
+
     const columnProps: Partial<ILabelProps> = {
-        style: {marginRight: 8, width: props.w}
+        style: {marginRight: 8, width: labelWidth}
     };
 
     const textStyleProps: Partial<ITextProps> = {

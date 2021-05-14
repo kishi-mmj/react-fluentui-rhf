@@ -1,22 +1,26 @@
 import {
     Checkbox,
     ChoiceGroup,
+    ComboBox,
     DatePicker,
     DefaultButton,
     Dropdown,
     DropdownMenuItemType,
     IChoiceGroupOption,
+    IComboBoxOption,
+    IComboBoxStyles,
     IDropdownOption,
     IDropdownStyles,
     IStackProps,
+    IStackTokens,
     PrimaryButton,
+    SelectableOptionMenuItemType,
     Stack,
     TextField
 } from "@fluentui/react";
 import React, {useCallback, VFC} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {FiledLabel} from "./FieldLabel";
-import {format} from "date-fns";
 import {FormatDate} from "./util/FormatDate";
 import {toggleFromArray} from "./util/ToggleFromArray";
 
@@ -27,6 +31,7 @@ interface FormIF {
     bloodType: string
     food: string
     birthDate: Date | null | undefined
+    job: string
 }
 
 export const Form: VFC = () => {
@@ -40,7 +45,8 @@ export const Form: VFC = () => {
             hobby: [],
             bloodType: "",
             food: "",
-            birthDate: undefined
+            birthDate: undefined,
+            job: "G"
         }
     })
 
@@ -86,6 +92,25 @@ export const Form: VFC = () => {
         {key: 'Lettuce', text: 'レタス'},
     ];
 
+    // comboBox
+    const comboBoxOptions: IComboBoxOption[] = [
+        {key: 'Header1', text: 'First heading', itemType: SelectableOptionMenuItemType.Header},
+        {key: 'A', text: 'Option A'},
+        {key: 'B', text: 'Option B'},
+        {key: 'C', text: 'Option C'},
+        {key: 'D', text: 'Option D'},
+        {key: 'divider', text: '-', itemType: SelectableOptionMenuItemType.Divider},
+        {key: 'Header2', text: 'Second heading', itemType: SelectableOptionMenuItemType.Header},
+        {key: 'E', text: 'Option E'},
+        {key: 'F', text: 'Option F', disabled: true},
+        {key: 'G', text: 'Option G'},
+        {key: 'H', text: 'Option H'},
+        {key: 'I', text: 'Option I'},
+        {key: 'J', text: 'Option J'},
+    ];
+// Optional styling to make the example look nicer
+    const comboBoxStyles: Partial<IComboBoxStyles> = {root: {maxWidth: 600}};
+
     return (
         <Stack style={{width: 600, margin: "0 auto"}}>
 
@@ -104,7 +129,6 @@ export const Form: VFC = () => {
                             <FiledLabel
                                 label={"名前"}
                                 htmlFor={field.name}
-                                w={120}
                                 required={true}
                             >
                                 <TextField
@@ -130,7 +154,6 @@ export const Form: VFC = () => {
                                 label={"年齢"}
                                 htmlFor={field.name}
                                 required={true}
-                                w={120}
                             >
                                 <TextField
                                     id={field.name}
@@ -152,12 +175,12 @@ export const Form: VFC = () => {
                         function merge(value: string) {
                             field.onChange(toggleFromArray(field.value, value))
                         }
+
                         return (
                             <FiledLabel
                                 label={"スポーツ"}
                                 htmlFor={field.name}
                                 required={true}
-                                w={120}
                                 errorText={fieldState.error?.message}
                             >
                                 <Stack tokens={{childrenGap: 10}}>
@@ -196,7 +219,6 @@ export const Form: VFC = () => {
                                 label={"血液型"}
                                 htmlFor={field.name}
                                 required={true}
-                                w={120}
                                 errorText={fieldState.error?.message}
                             >
                                 <ChoiceGroup
@@ -220,7 +242,6 @@ export const Form: VFC = () => {
                                 label={"食べ物"}
                                 htmlFor={field.name}
                                 required={true}
-                                w={120}
                             >
                                 <Dropdown
                                     id={field.name}
@@ -245,7 +266,6 @@ export const Form: VFC = () => {
                                 label={"生年月日"}
                                 htmlFor={field.name}
                                 required={true}
-                                w={120}
                             >
                                 <DatePicker
                                     id={field.name}
@@ -253,6 +273,45 @@ export const Form: VFC = () => {
                                     textField={{errorMessage: fieldState.error?.message}}
                                     onSelectDate={(date) => field.onChange(date)}
                                     formatDate={FormatDate}
+                                />
+                            </FiledLabel>
+                        )
+                    }}
+                />
+
+
+                <Controller
+                    control={control}
+                    name={"job"}
+                    rules={{required: "必須入力"}}
+                    render={({field, fieldState}) => {
+                        function fixDisplayValue(v: string) {
+                            let text: string | undefined = v
+                            comboBoxOptions?.some(e => {
+                                if (e.key === v) {
+                                    text = e.text
+                                    return
+                                }
+                            })
+                            return text
+                        }
+                        return (
+                            <FiledLabel
+                                label={"職業"}
+                                htmlFor={field.name}
+                                required={true}
+                            >
+                                <ComboBox
+                                    id={field.name}
+                                    text={fixDisplayValue(field.value)}
+                                    defaultValue={field.value || undefined}
+                                    selectedKey={field.value || undefined}
+                                    allowFreeform={true}
+                                    autoComplete={'on'}
+                                    options={comboBoxOptions}
+                                    styles={comboBoxStyles}
+                                    errorMessage={fieldState.error?.message}
+                                    onChange={(_1, option, _2, value) => field.onChange(option?.key || value)}
                                 />
                             </FiledLabel>
                         )
